@@ -80,6 +80,8 @@ AETHERIS does not treat every model response as equally reliable. Each result is
 
 ## 🧱 Architecture
 
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/xdzy-td/aetheris-aiengine?utm_source=readme&utm_medium=badge)
+
 [![Architecture diagram of xdzy-td/aetheris-aiengine](https://gitdiagram.com/xdzy-td/aetheris-aiengine/diagram.png)](https://gitdiagram.com/xdzy-td/aetheris-aiengine?utm_source=readme&utm_medium=picture)
 
 ### Analysis Stack
