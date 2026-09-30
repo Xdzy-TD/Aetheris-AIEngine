@@ -59,9 +59,4 @@ See `.env.example` for configuration (Ollama endpoint, API key, upload
 limits, LoRA adapter paths, GUI SSL, etc.) and `docs/ollama_setup.md` for
 setting up the local LLM planner.
 
-## Status
-
-Nothing under "Implemented" in `docs/STATUS.md` is aspirational — it only
-lists code that runs in this repository, and calls out plainly where a
-classical baseline stands in for a trained model. Read that file before
-assuming any capability.
+[![Architecture diagram of xdzy-td/aetheris-aiengine](https://gitdiagram.com/xdzy-td/aetheris-aiengine/diagram.png)](https://gitdiagram.com/xdzy-td/aetheris-aiengine?utm_source=readme&utm_medium=picture)
