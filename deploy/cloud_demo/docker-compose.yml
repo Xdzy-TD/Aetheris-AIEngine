@@ -1,0 +1,93 @@
+version: "3.9"
+
+x-security: &hardened
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  tmpfs:
+    - /tmp
+
+services:
+  aetheris-api:
+    <<: *hardened
+    build:
+      context: ../..
+      dockerfile: deploy/cloud_demo/Dockerfile
+    container_name: aetheris-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - aetheris-logs:/app/logs
+      - aetheris-artifacts:/app/artifacts
+      - aetheris-data:/app/data
+    environment:
+      - AETHERIS_DEMO_MODE=true
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4g
+        reservations:
+          cpus: "0.5"
+          memory: 512m
+
+  aetheris-gui:
+    <<: *hardened
+    build:
+      context: ../..
+      dockerfile: deploy/cloud_demo/Dockerfile
+    container_name: aetheris-gui
+    ports:
+      - "5000:5000"
+    volumes:
+      - aetheris-logs:/app/logs
+      - aetheris-artifacts:/app/artifacts
+      - aetheris-uploads:/app/pipeline/uploads
+    environment:
+      - AETHERIS_SERVICE=gui
+      - AETHERIS_DEMO_MODE=true
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 2g
+        reservations:
+          cpus: "0.25"
+          memory: 256m
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: aetheris-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    restart: unless-stopped
+
+  # Optional: Xray tunnel for remote demo access
+  # Uncomment and configure for LAN/internet tunneling
+  # xray-tunnel:
+  #   image: teddysun/xray:latest
+  #   container_name: aetheris-tunnel
+  #   ports:
+  #     - "443:443"
+  #   volumes:
+  #     - ./xray_config.json:/etc/xray/config.json:ro
+  #   restart: unless-stopped
+
+volumes:
+  aetheris-data:
+  aetheris-logs:
+  aetheris-artifacts:
+  aetheris-uploads:
+  qdrant-data:

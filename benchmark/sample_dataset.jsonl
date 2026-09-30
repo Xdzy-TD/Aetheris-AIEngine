@@ -1,0 +1,2 @@
+{"query": {"text": "What land cover types are visible in this satellite image?", "images": [{"filename": "demo.tif", "modality": "optical"}]}, "expected": {"keywords": ["unavailable"]}}
+{"query": {"text": "What changed between these two images?", "images": [{"filename": "t1.tif", "modality": "optical"}, {"filename": "t2.tif", "modality": "optical"}]}, "expected": {"keywords": ["unavailable"]}}

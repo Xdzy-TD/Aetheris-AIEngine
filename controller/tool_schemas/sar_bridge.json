@@ -1,0 +1,27 @@
+{
+  "name": "sar_bridge",
+  "description": "SAR speckle despeckling via classical adaptive filters (Lee, Frost, Kuan). Reduces speckle noise in SAR imagery so downstream classical land-cover analysis is more reliable. Does not perform SAR-to-optical translation — no trained model exists for that here.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "sar_image_path": {
+        "type": "string",
+        "description": "Path to the input SAR image (GeoTIFF)"
+      },
+      "filter_type": {
+        "type": "string",
+        "enum": ["lee", "frost", "kuan"],
+        "default": "lee",
+        "description": "Classical adaptive despeckle filter to apply"
+      }
+    },
+    "required": ["sar_image_path"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "bridged_image_path": { "type": "string", "description": "Path to the despeckled output image" },
+      "method_used": { "type": "string", "description": "Filter actually applied" }
+    }
+  }
+}

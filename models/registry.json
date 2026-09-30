@@ -1,0 +1,174 @@
+{
+  "registry_version": "1",
+  "note": "Every entry here describes code that actually runs in this repo. 'kind' states what it is; metrics are empty until an evaluation run produces them. Nothing in this file is aspirational.",
+  "models": [
+    {
+      "name": "spectral-threshold-vqa",
+      "version": "0.1.0",
+      "kind": "classical-baseline",
+      "task": "vqa_caption",
+      "modality": [
+        "optical",
+        "multispectral"
+      ],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Excess-green / blue-dominance / brightness thresholds over real pixels. Explainable proxy, not a trained VLM."
+    },
+    {
+      "name": "spectral-threshold-grounding",
+      "version": "0.1.0",
+      "kind": "classical-baseline",
+      "task": "grounding",
+      "modality": [
+        "optical",
+        "multispectral"
+      ],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Keyword-to-landcover-class mask from classical indices. No open-vocabulary grounding model or SAM."
+    },
+    {
+      "name": "pixel-difference-change",
+      "version": "0.1.0",
+      "kind": "classical-baseline",
+      "task": "change_detection",
+      "modality": [
+        "optical",
+        "sar",
+        "multispectral"
+      ],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Co-registered bi-temporal pixel differencing. Not a learned bi-temporal network."
+    },
+    {
+      "name": "speckle-filter-sar-bridge",
+      "version": "0.1.0",
+      "kind": "classical-baseline",
+      "task": "sar_bridge",
+      "modality": [
+        "sar"
+      ],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Lee/refined-Lee style speckle filtering. Real SAR signal processing, not a translation model."
+    },
+    {
+      "name": "threshold-agreement-fusion",
+      "version": "0.1.0",
+      "kind": "classical-baseline",
+      "task": "optical_sar_fusion",
+      "modality": [
+        "optical",
+        "sar"
+      ],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Cross-modal agreement between optical and SAR-backscatter masks. Not a learned fusion model."
+    },
+    {
+      "name": "blip-vqa-base",
+      "version": "transformers-pretrained",
+      "kind": "pretrained-vlm",
+      "task": "vlm_vqa_caption",
+      "modality": [
+        "optical"
+      ],
+      "checkpoint": "Salesforce/blip-vqa-base (HuggingFace Hub)",
+      "dataset": "VQAv2 + COCO captions (natural photos, not remote sensing)",
+      "license": "BSD-3-Clause",
+      "metrics": {},
+      "description": "Real pretrained BLIP inference via transformers. Genuine model, genuine weights, genuine forward pass -- but never fine-tuned on satellite/aerial imagery, so its answers on overhead content are out-of-distribution guesses, not measurements. A LoRA fine-tuning script (training/finetune_vqa_lora.py, on RSVQA-LR) exists and specialists/vlm_caption/model.py will load its output via AETHERIS_VLM_LORA_PATH, but no adapter has been trained -- this environment has no GPU or Hugging Face Hub access -- so no RS-adapted checkpoint ships. Optional dependency; absent torch/transformers means this tool is unbound/unavailable rather than silently faked. Every call also returns the actual runtime model_id and lora_applied (whether an adapter really loaded, not just whether a path was configured) alongside the answer, since AETHERIS_VLM_MODEL_ID/AETHERIS_VLM_LORA_PATH can override this static entry per-deployment."
+    },
+    {
+      "name": "clipseg-rd64-refined",
+      "version": "transformers-pretrained",
+      "kind": "pretrained-segmentation",
+      "task": "vlm_grounding",
+      "modality": [
+        "optical"
+      ],
+      "checkpoint": "CIDAS/clipseg-rd64-refined (HuggingFace Hub)",
+      "dataset": "PhraseCut (natural photos, not remote sensing)",
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Real pretrained CLIPSeg inference via transformers -- genuine open-vocabulary segmentation, but never fine-tuned on satellite/aerial imagery, so masks on overhead content are out-of-distribution guesses. A LoRA fine-tuning script (training/finetune_grounding_lora.py) exists, following the published CLIPSeg-on-FLAIR recipe, and specialists/vlm_grounding/model.py will load its output via AETHERIS_GROUNDING_LORA_PATH, but no adapter has been trained -- this environment has no GPU or Hugging Face Hub access -- so no RS-adapted checkpoint ships. Optional dependency; absent torch/transformers means this tool is unbound/unavailable rather than silently faked. Every call also returns the actual runtime model_id and lora_applied (whether an adapter really loaded, not just whether a path was configured) alongside the mask, since AETHERIS_GROUNDING_LORA_PATH can override this static entry per-deployment."
+    },
+    {
+      "name": "clip-vit-base-patch32",
+      "version": "transformers-pretrained",
+      "kind": "pretrained-embedding",
+      "task": "vlm_change_detection",
+      "modality": [
+        "optical"
+      ],
+      "checkpoint": "openai/clip-vit-base-patch32 (HuggingFace Hub)",
+      "dataset": "WIT (natural photo/caption pairs, not remote sensing)",
+      "license": "MIT",
+      "metrics": {},
+      "description": "Real pretrained CLIP vision-transformer inference via transformers, repurposed for change: cosine distance between corresponding patch embeddings of two acquisitions. A genuine model signal, but not a model trained to detect change, and not fine-tuned on remote sensing -- distances are uncalibrated. Optional dependency; absent torch/transformers means this tool is unbound/unavailable rather than silently faked. Every call also returns the actual runtime model_id alongside the result (no LoRA path for this specialist -- CLIP is used as-is, unadapted)."
+    },
+    {
+      "name": "embedding-geo-rag",
+      "version": "0.1.0",
+      "kind": "implemented",
+      "task": "geo_rag",
+      "modality": [],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Sentence-transformer text embeddings over an indexed geospatial corpus, with an in-memory NumPy fallback. Retrieval only \u2014 it does not analyse pixels."
+    },
+    {
+      "name": "conformal-calibrator",
+      "version": "0.1.0",
+      "kind": "implemented",
+      "task": "confidence_calibration",
+      "modality": [],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Split-conformal interval. Ships UNFITTED: with no labelled calibration set it reports method='uncalibrated' and calibrated=false rather than inventing coverage."
+    },
+    {
+      "name": "logreg-evidence-fusion",
+      "version": "0.1.0",
+      "kind": "learned-fusion",
+      "task": "fusion_change_detection",
+      "modality": [
+        "optical",
+        "sar"
+      ],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "Logistic-regression fusion over optical pixel-difference, SAR backscatter-difference and temporal-gap evidence channels. Weights are trained via gradient descent (training/fit_fusion_model.py), not hand-set thresholds -- a genuinely learned combiner, unlike pixel-difference-change or threshold-agreement-fusion above. Ships unfitted (informative-prior weights, fusion_model_fitted: false) since no labeled bi-temporal dataset ships with this repo; point AETHERIS_FUSION_MODEL_PATH at a fitted checkpoint to use a real one. Both evidence channels are co-registered before differencing with the same implausible-shift guard as pixel-difference-change (coregistration_reliable reported per channel). An offline fallback, training/fit_fusion_model_synthetic.py, can fit a real (non-hardcoded) checkpoint on locally generated synthetic pairs when Hugging Face Hub access isn't available -- see docs/STATUS.md for why that's a sanity-check fit, not a real-world accuracy claim."
+    },
+    {
+      "name": "jev-decision-engine",
+      "version": "0.1.0",
+      "kind": "implemented",
+      "task": "routing_scoring_verification",
+      "modality": [],
+      "checkpoint": null,
+      "dataset": null,
+      "license": "Apache-2.0",
+      "metrics": {},
+      "description": "JEV (Judgement-Evaluation-Verification) engine — a fast, typed, probabilistic decision engine modelled on the TypeSafe AI System One architecture. Replaces LLM-based routing with zero-token, sub-millisecond decisions using sigmoid/softmax over hand-tuned log-odds feature weights. Handles tool-chain routing (which specialists to invoke), evidence quality scoring, claim-consistency verification, phenomenon classification, and policy/safety guardrails. Saves ~1200 tokens per query for planning alone. All decisions are deterministic and reproducible given the same input state — no randomness, no LLM calls, no network. Weights are informative priors (not learned from data), encoding the same domain knowledge as the rule-based fallback planner but producing calibrated probabilities instead of hard if/else switches."
+    }
+  ]
+}

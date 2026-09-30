@@ -1,0 +1,51 @@
+{
+  "name": "geo_rag",
+  "description": "Geospatial RAG — retrieves contextual geographic information from a vector index of OpenStreetMap tags, DEM elevation data, and land-cover statistics for a given area of interest. Returns empty results with an explanatory note if no data has been indexed for the AOI yet — it never fabricates context.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "bbox": {
+        "type": "array",
+        "items": { "type": "number" },
+        "description": "Bounding box [west, south, east, north] in EPSG:4326"
+      },
+      "query_text": {
+        "type": "string",
+        "description": "Natural language query to semantically search the index"
+      },
+      "data_layers": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["osm", "dem", "landcover"]
+        },
+        "default": ["osm", "dem", "landcover"],
+        "description": "Which data layers to query"
+      },
+      "top_k": {
+        "type": "integer",
+        "default": 5,
+        "description": "Number of top results to retrieve"
+      }
+    },
+    "required": ["bbox", "query_text"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "context_snippets": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Retrieved context passages relevant to the query"
+      },
+      "elevation_stats": {
+        "type": "object",
+        "description": "Min/max/mean elevation for the AOI (if DEM layer queried)"
+      },
+      "landcover_distribution": {
+        "type": "object",
+        "description": "Land cover class percentages for the AOI (if landcover layer queried)"
+      }
+    }
+  }
+}

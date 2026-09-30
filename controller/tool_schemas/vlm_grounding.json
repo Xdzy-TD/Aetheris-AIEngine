@@ -1,0 +1,36 @@
+{
+  "name": "vlm_grounding",
+  "description": "Open-vocabulary pixel segmentation using a real pretrained model (CLIPSeg, via transformers). Given an image and a free-text description, produces a binary mask via genuine model inference rather than keyword-to-class lookup. Base checkpoint is trained on natural photos, not remote sensing, so masks on overhead content are out-of-distribution guesses, not measurements, UNLESS a LoRA adapter has been trained (see training/finetune_grounding_lora.py) and AETHERIS_GROUNDING_LORA_PATH points at it -- none ships by default. Requires the optional 'vlm' extra (torch + transformers); refuses via analysis_unavailable if unavailable.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "image_path": {
+        "type": "string",
+        "description": "Path to the input satellite image"
+      },
+      "text_prompt": {
+        "type": "string",
+        "description": "Free-text description of the region to segment (e.g. 'water bodies', 'built-up area')"
+      },
+      "return_bbox": {
+        "type": "boolean",
+        "default": true,
+        "description": "Also return a bounding box around the mask"
+      }
+    },
+    "required": ["image_path", "text_prompt"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "mask_path": { "type": "string", "description": "Path to the output binary mask (PNG)" },
+      "bbox": {
+        "type": "array",
+        "items": { "type": "number" },
+        "description": "Bounding box [x_min, y_min, x_max, y_max] in pixel coordinates"
+      },
+      "mask_area_px": { "type": "integer", "description": "Number of positive pixels in the mask" },
+      "confidence": { "type": "number", "description": "Mean sigmoid probability inside the predicted mask, from the model's own output" }
+    }
+  }
+}

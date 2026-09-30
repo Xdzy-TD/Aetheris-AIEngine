@@ -1,0 +1,37 @@
+{
+  "name": "vlm_change_detection",
+  "description": "Bi-temporal change detection using real pretrained vision-transformer embeddings (CLIP, via transformers), instead of raw pixel differencing. Compares corresponding patch embeddings between two acquisitions via cosine distance — a genuine semantic-dissimilarity signal, not a trained bi-temporal change model. NOT fine-tuned on remote sensing or on change detection itself, so absolute distances are uncalibrated. Requires the optional 'vlm' extra (torch + transformers); refuses via analysis_unavailable if unavailable.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "image_t1_path": {
+        "type": "string",
+        "description": "Path to the earlier (pre-change) image"
+      },
+      "image_t2_path": {
+        "type": "string",
+        "description": "Path to the later (post-change) image"
+      },
+      "modality": {
+        "type": "string",
+        "enum": ["optical", "sar", "cross_modal"],
+        "default": "optical",
+        "description": "Modality of the input pair (used only for labeling the summary)"
+      }
+    },
+    "required": ["image_t1_path", "image_t2_path"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "change_map_path": { "type": "string", "description": "Path to the patch-level change map" },
+      "change_summary": { "type": "string", "description": "Natural language summary of detected semantic change" },
+      "changed_area_pct": { "type": "number", "description": "Percentage of patches flagged as semantically changed" },
+      "change_embedding": {
+        "type": "array",
+        "items": { "type": "number" },
+        "description": "Flattened grid of per-patch cosine distances between the two acquisitions' ViT embeddings"
+      }
+    }
+  }
+}

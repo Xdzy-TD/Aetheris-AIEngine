@@ -1,0 +1,30 @@
+{
+  "name": "vlm_vqa_caption",
+  "description": "Visual Question Answering / captioning using a real pretrained vision-language model (BLIP, via transformers). Base checkpoint is trained on natural photos, not remote sensing, so answers about overhead/sensor-specific content are out-of-distribution guesses, not measurements, UNLESS a LoRA adapter has been trained (see training/finetune_vqa_lora.py) and AETHERIS_VLM_LORA_PATH points at it -- none ships by default. Requires the optional 'vlm' extra (torch + transformers); refuses via analysis_unavailable if unavailable.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "image_path": {
+        "type": "string",
+        "description": "Path to the input satellite image (GeoTIFF, PNG, or JPEG)"
+      },
+      "question": {
+        "type": "string",
+        "description": "Natural language question about the image, or 'caption' for a descriptive caption"
+      },
+      "modality": {
+        "type": "string",
+        "enum": ["optical", "sar", "multispectral"],
+        "description": "Sensor modality of the input image (used only for labeling the answer)"
+      }
+    },
+    "required": ["image_path", "question"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "answer": { "type": "string", "description": "Natural language answer or caption from the VLM" },
+      "raw_confidence": { "type": "number", "description": "Mean top-token generation probability [0,1], from the model's own softmax" }
+    }
+  }
+}

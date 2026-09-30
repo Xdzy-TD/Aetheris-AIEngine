@@ -1,0 +1,44 @@
+# =============================================================================
+# AETHERIS M01–M10 — Additional Dependencies
+# =============================================================================
+#
+# These are NEW dependencies added by the M01–M10 layer.
+# The base AETHERIS dependencies (fastapi, uvicorn, pydantic, etc.) are
+# assumed to be already installed from the original project.
+#
+# Install: pip install -r pipeline/requirements.txt
+# =============================================================================
+
+# Web GUI framework
+flask>=3.0
+
+# Optional: only needed for AETHERIS_GUI_SSL_ADHOC=true (auto-generated
+# self-signed HTTPS cert for local dev). Not needed for plain HTTP or for
+# AETHERIS_GUI_SSL_CERT/AETHERIS_GUI_SSL_KEY with a real certificate.
+# pyOpenSSL>=24.0
+
+# Required for Argon2id password hashing (OWASP-recommended).
+# Falls back to stdlib scrypt if absent, but with a startup warning.
+argon2-cffi>=23.1
+
+# Required by controller/ollama_client.py (LLM planner HTTP client) — not
+# previously listed here, causing ModuleNotFoundError on a clean install.
+httpx>=0.27
+
+# Required by interfaces/voice/stt.py, used by GUI's /api/stt/transcribe
+# (offline mic fallback). Already in the root requirements.txt; listed here
+# too since the GUI can be installed standalone.
+faster-whisper>=1.0
+
+# Required by interfaces/voice/tts.py, used by GUI's /api/tts/speak
+# (offline neural voice fallback, browser SpeechSynthesis is the primary
+# path). Already in the root requirements.txt; listed here too since the
+# GUI can be installed standalone. Also needs one Piper ONNX voice model
+# downloaded separately, e.g.: piper download en_US-lessac-medium
+piper-tts>=1.2
+
+# Already in base AETHERIS, listed here for completeness:
+# pydantic>=2.7
+# structlog>=24.1
+# numpy>=1.26
+# slowapi>=0.1.9

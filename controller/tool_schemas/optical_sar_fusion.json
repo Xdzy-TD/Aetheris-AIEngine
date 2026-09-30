@@ -1,0 +1,35 @@
+{
+  "name": "optical_sar_fusion",
+  "description": "Joint optical+SAR land-cover extraction. Co-registers the pair via FFT phase-correlation, then compares classical spectral land-cover classification on the optical image against classical SAR backscatter-intensity thresholds on the SAR image, and reports water/vegetation/built-up regions where both modalities independently agree. Not a trained fusion model.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "optical_image_path": {
+        "type": "string",
+        "description": "Path to the co-registered optical/multispectral image"
+      },
+      "sar_image_path": {
+        "type": "string",
+        "description": "Path to the co-registered SAR image, same area as the optical image"
+      }
+    },
+    "required": ["optical_image_path", "sar_image_path"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "optical_landcover_pct": { "type": "object", "description": "Land-cover class percentages from the optical image alone" },
+      "sar_water_pct": { "type": "number", "description": "Percentage of scene classed as water from SAR backscatter alone" },
+      "sar_veg_pct": { "type": "number", "description": "Percentage of scene classed as vegetation from SAR backscatter alone" },
+      "sar_urban_pct": { "type": "number", "description": "Percentage of scene classed as built-up from SAR backscatter alone" },
+      "fused_water_pct": { "type": "number", "description": "Percentage of scene both optical and SAR independently agree is water" },
+      "fused_veg_pct": { "type": "number", "description": "Percentage of scene both optical and SAR independently agree is vegetation" },
+      "fused_urban_pct": { "type": "number", "description": "Percentage of scene both optical and SAR independently agree is built-up" },
+      "agreement_pct": { "type": "number", "description": "Percentage of pixels where the optical and SAR classifications agree, across water/vegetation/built-up" },
+      "fused_map_path": { "type": "string", "description": "Path to a colour-coded map of the agreed water/vegetation/built-up regions" },
+      "applied_shift_px": { "type": "array", "items": { "type": "integer" }, "description": "[dy, dx] pixel shift estimated and applied to co-register the SAR image onto the optical grid" },
+      "summary": { "type": "string", "description": "Natural language summary of the joint analysis" },
+      "confidence": { "type": "number", "description": "Derived from cross-modal agreement rate" }
+    }
+  }
+}

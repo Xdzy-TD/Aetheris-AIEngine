@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Pytest cache
+.pytest_cache/
+lastfailed
+nodeids
+CACHEDIR.TAG
+
+# Runtime outputs
+execution_chain.jsonl
+report.json
+conformal.json
+latest.json
+
+# Runtime artifacts — never ship in ZIP
+artifacts/*.png
+artifacts/*.meta.json
+artifacts/outputs/
+logs/*.jsonl
+uploads/
+security_pipeline_layer/uploads/
+pipeline/uploads/
+
+# Model checkpoints (trained locally or downloaded)
+models/adapters/
+models/checkpoints/
+
+# Calibration outputs
+calibration/*.json
+calibration/*.pkl
+
+# IDE / OS
+.venv/
+.env
+*.swp
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+

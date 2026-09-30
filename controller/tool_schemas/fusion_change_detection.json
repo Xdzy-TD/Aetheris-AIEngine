@@ -1,0 +1,60 @@
+{
+  "name": "fusion_change_detection",
+  "description": "Learned bi-temporal change detection via multimodal evidence fusion — combines optical pixel-difference evidence, optional SAR backscatter-difference evidence, and optional temporal-gap evidence through a logistic-regression fusion model whose weights are trained (training/fit_fusion_model.py), not a fixed threshold on one signal. Unlike change_detection (pixel diff only) or vlm_change_detection (CLIP embedding distance only), this fuses several independent signals; any missing channel (no SAR pair, no dates) is passed through as neutral evidence rather than biasing the result. Ships with an unfitted informative-prior model until a checkpoint is fitted; fusion_model_fitted in the result says which.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "image_t1_path": {
+        "type": "string",
+        "description": "Path to the earlier (pre-change) optical/multispectral image"
+      },
+      "image_t2_path": {
+        "type": "string",
+        "description": "Path to the later (post-change) optical/multispectral image"
+      },
+      "sar_image_t1_path": {
+        "type": "string",
+        "description": "Optional: path to a SAR image of the same area/time as image_t1_path, for cross-modal evidence"
+      },
+      "sar_image_t2_path": {
+        "type": "string",
+        "description": "Optional: path to a SAR image of the same area/time as image_t2_path"
+      },
+      "date_t1": {
+        "type": "string",
+        "description": "Optional: ISO 8601 acquisition date/time of the T1 image, for temporal evidence"
+      },
+      "date_t2": {
+        "type": "string",
+        "description": "Optional: ISO 8601 acquisition date/time of the T2 image"
+      },
+      "modality": {
+        "type": "string",
+        "enum": ["optical", "sar", "cross_modal"],
+        "default": "optical",
+        "description": "Modality of the primary (optical) pair, used only for labeling the summary"
+      }
+    },
+    "required": ["image_t1_path", "image_t2_path"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "change_map_path": { "type": "string", "description": "Path to the fused change map" },
+      "change_summary": { "type": "string", "description": "Natural language summary of the fused decision" },
+      "changed_area_pct": { "type": "number", "description": "Percentage of the scene flagged as changed by the fused model" },
+      "change_embedding": {
+        "type": "array",
+        "items": { "type": "number" },
+        "description": "Flattened grid of per-cell fused change probabilities"
+      },
+      "evidence_channels_used": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Which evidence channels actually contributed real (non-neutral) evidence: any of optical, sar, temporal"
+      },
+      "fusion_model_fitted": { "type": "boolean", "description": "Whether a trained checkpoint was loaded, vs. the unfitted informative prior" },
+      "applied_shift_px": { "type": "object", "description": "{optical: [dy, dx], sar: [dy, dx]} co-registration shifts applied before differencing" }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "change_detection",
+  "description": "Bi-temporal change detection via thresholded absolute pixel differencing. Compares two images of the same area taken at different times and produces a change map, a natural-language summary, and a compressed 8x4 grid signature of where the change occurred (classical CV, not a trained model).",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "image_t1_path": {
+        "type": "string",
+        "description": "Path to the earlier (pre-change) image"
+      },
+      "image_t2_path": {
+        "type": "string",
+        "description": "Path to the later (post-change) image"
+      },
+      "modality": {
+        "type": "string",
+        "enum": ["optical", "sar", "cross_modal"],
+        "default": "optical",
+        "description": "Modality of the input pair (used only for labeling the summary)"
+      }
+    },
+    "required": ["image_t1_path", "image_t2_path"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "change_map_path": { "type": "string", "description": "Path to the pixel-level change map" },
+      "change_summary": { "type": "string", "description": "Natural language summary of detected changes" },
+      "changed_area_pct": { "type": "number", "description": "Percentage of the scene that changed" },
+      "change_embedding": {
+        "type": "array",
+        "items": { "type": "number" },
+        "description": "8x4 grid of mean pixel-difference magnitude, a compressed signature of where the change happened"
+      }
+    }
+  }
+}

@@ -1,0 +1,138 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aetheris"
+version = "0.1.0"
+description = "Agentic Remote-Sensing Intelligence System"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "Apache-2.0"}
+
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+    # Mounts the legacy Flask GUI (pipeline/gui/app.py) inside FastAPI at
+    # /gui — imported unconditionally by interfaces/api/app.py, so this
+    # is a base dependency, not part of the optional `gui` extra.
+    "a2wsgi>=1.10",
+    "structlog>=24.1",
+    "pydantic>=2.7",
+    "httpx>=0.27",
+    "numpy>=1.26",
+    "Pillow>=10.3",
+    "scipy>=1.13",
+    "python-multipart>=0.0.9",
+    "ollama>=0.4",
+    "slowapi>=0.1.9",
+    "prometheus-client>=0.20",
+    # Imported lazily by preprocessing/arosics_coreg.py and confidence/conformal.py
+    # (both fall back gracefully when absent) — already treated as base deps in
+    # requirements.txt; pyproject.toml just hadn't caught up.
+    "arosics>=1.7",
+    "opencv-python-headless>=4.9",
+    "mapie>=0.8",
+    "argon2-cffi>=23.1",
+]
+
+[project.optional-dependencies]
+geo = [
+    "rasterio>=1.3",
+]
+geo_rag = [
+    "qdrant-client>=1.9",
+    "sentence-transformers>=3.0",
+]
+voice = [
+    "faster-whisper>=1.0",
+    "piper-tts>=1.2",
+]
+ui = [
+    "textual>=0.70",
+]
+gui = [
+    "flask>=3.0",            # pipeline GUI (run_gui.py)
+]
+gpu = [
+    "torch>=2.2",
+    "accelerate>=0.30",
+]
+vlm = [
+    "torch>=2.2",
+    "transformers>=4.40",
+]
+vlm-train = [
+    "peft>=0.11",
+    "datasets>=2.19",
+]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27",
+    "ruff>=0.4",
+    "mypy>=1.10",
+    "cyclonedx-bom>=5.0",
+    "flask>=3.0",           # pipeline GUI test suite
+]
+all = ["aetheris[geo,geo_rag,voice,ui,dev,gui]"]
+
+[project.scripts]
+# NOTE: run.sh / run.bat / run.ps1 / harness/run.sh all call a root-level
+# `run.py` with `serve`/`demo`/`benchmark`/`verify-audit` subcommands — that
+# file is not present anywhere in the archive this was restored from (only
+# `pipeline/run.py`, with unrelated `gui`/`health`/`pipeline`/`dag`
+# subcommands, survived). Pointed at the module that actually exists so the
+# entry point doesn't reference a missing file; see RESTORATION_NOTES.md.
+aetheris = "pipeline.run:main"
+
+[tool.setuptools.packages.find]
+include = [
+    "controller*",
+    "specialists*",
+    "confidence*",
+    "preprocessing*",
+    "interfaces*",
+    "pipeline*",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+# Optional-extra deps (geo_rag/voice/ui groups) — not part of the base install,
+# and several ship no stubs at all. Type-checking them meaningfully requires
+# installing the extras; until then, don't fail the build over their absence.
+module = [
+    "qdrant_client.*",
+    "rasterio.*",
+    "sentence_transformers.*",
+    "mapie.*",
+    "arosics.*",
+    "textual.*",
+    "faster_whisper.*",
+    "piper.*",
+    "scipy.ndimage.*",
+    "ollama.*",
+    "slowapi.*",
+    "torch.*",
+    "accelerate.*",
+    "peft.*",
+    "datasets.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "pipeline/tests"]
+asyncio_mode = "auto"

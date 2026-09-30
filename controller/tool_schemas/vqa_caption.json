@@ -1,0 +1,30 @@
+{
+  "name": "vqa_caption",
+  "description": "Visual Question Answering and image captioning for remote sensing imagery. Answers natural language questions about a single satellite image or generates descriptive captions, computed from real spectral land-cover statistics (classical CV, not a trained VLM).",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "image_path": {
+        "type": "string",
+        "description": "Path to the input satellite image (GeoTIFF, PNG, or JPEG)"
+      },
+      "question": {
+        "type": "string",
+        "description": "Natural language question about the image, or 'caption' for a descriptive caption"
+      },
+      "modality": {
+        "type": "string",
+        "enum": ["optical", "sar", "multispectral"],
+        "description": "Sensor modality of the input image (used only for labeling the answer)"
+      }
+    },
+    "required": ["image_path", "question"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "answer": { "type": "string", "description": "Natural language answer or caption" },
+      "raw_confidence": { "type": "number", "description": "Confidence score [0,1], derived from how far the estimate sits from an ambiguous decision boundary" }
+    }
+  }
+}

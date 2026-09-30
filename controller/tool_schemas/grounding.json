@@ -1,0 +1,36 @@
+{
+  "name": "grounding",
+  "description": "Pixel-accurate segmentation grounding via spectral thresholding. Given an image and a text description of a region of interest (e.g. 'water', 'vegetation', 'urban'), produces a binary mask for the matching land-cover class computed from real pixel values (classical CV, not a trained segmentation model).",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "image_path": {
+        "type": "string",
+        "description": "Path to the input satellite image"
+      },
+      "text_prompt": {
+        "type": "string",
+        "description": "Natural language description of the region to segment (e.g. 'water bodies', 'built-up area')"
+      },
+      "return_bbox": {
+        "type": "boolean",
+        "default": true,
+        "description": "Also return a bounding box around the mask"
+      }
+    },
+    "required": ["image_path", "text_prompt"]
+  },
+  "returns": {
+    "type": "object",
+    "properties": {
+      "mask_path": { "type": "string", "description": "Path to the output binary mask (PNG)" },
+      "bbox": {
+        "type": "array",
+        "items": { "type": "number" },
+        "description": "Bounding box [x_min, y_min, x_max, y_max] in pixel coordinates"
+      },
+      "mask_area_px": { "type": "integer", "description": "Number of positive pixels in the mask" },
+      "confidence": { "type": "number", "description": "Brightness contrast between masked and unmasked regions, as a crude distinctness signal" }
+    }
+  }
+}
