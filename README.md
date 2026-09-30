@@ -3,7 +3,9 @@
 Agentic Remote-Sensing Intelligence System — a satellite/aerial imagery
 analysis service where an LLM-backed (with rule-based fallback) controller
 inspects a query and dynamically composes a chain of specialist tools,
-rather than running a fixed pipeline.
+rather than running a fixed pipeline. 
+
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/xdzy-td/aetheris-aiengine?utm_source=readme&utm_medium=badge)
 
 > **Note on this file:** the original `README.md` was lost in the archive
 > this repository was restored from — see `RESTORATION_NOTES.md` — and has
